@@ -24,7 +24,7 @@ router.post('/upload',async(req,res)=>{
 
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
-import { atsResumeAnalyzer, careerGuidancePrompt } from './GeminiPrompts.js';
+import { atsResumeAnalyzerPrompt, careerGuidancePrompt } from './GeminiPrompts.js';
 
 dotenv.config();
 
@@ -74,7 +74,8 @@ try {
     if(!pdfBase64){
         return res.status(400).json({message:"PDF data is required"})
     }
-    const prompt=atsResumeAnalyzer();
+    const prompt=atsResumeAnalyzerPrompt();
+    
     const response=await ai.models.generateContent({
             model:"gemini-2.5-flash",
             contents:[
@@ -87,7 +88,7 @@ try {
                         {
                             inlineData:{
                                 mimeType:"application/pdf",
-                                data:pdfBase64.replace(/^data:application\/pdf; base64,/,"")
+                                data:pdfBase64.replace(/^data:application\/pdf;base64,/,"")
                             }
                         }
                     ]

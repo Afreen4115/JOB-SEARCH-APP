@@ -44,7 +44,7 @@ export const careerGuidancePrompt = (skills: any) => {
 };
 
 
-export const atsResumeAnalyzer=()=>{
+export const atsResumeAnalyzerPrompt=()=>{
     const prompt = `
     You are an expert ATS (Applicant Tracking System) analyzer. Analyze the following resume
     and provide:
