@@ -4,6 +4,7 @@ import routes from "./routes.js";
 import cors from 'cors';
 import { v2 as cloudinary } from 'cloudinary';
 import { startSendMailConsumer } from './consumer.js';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
@@ -17,9 +18,10 @@ startSendMailConsumer();
 
 const app=express();
 
-
 const PORT=process.env.PORT;
 app.use(cors());
+app.use(cookieParser());
+
 
 app.use(express.json({limit:"50mb"}));//taking file here so limit
 app.use(express.urlencoded({limit:"50mb",extended:true}));
