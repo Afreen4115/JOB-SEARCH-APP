@@ -35,11 +35,11 @@ const LoginPage = () => {
         secure: true,
         path: "/",
       });
-      setUser(data.user);
+      setUser(data.userObject);
       setIsAuth(true);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message);
       setIsAuth(false);
     } finally {
       setBtnLoading(false);

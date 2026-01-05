@@ -1,101 +1,121 @@
-"use client"
-import React, { useState } from 'react'
-import Link from 'next/link';
-import { Button } from './ui/button';
-import { Briefcase, Home, Info, LogOut, Menu, User, X } from 'lucide-react';
-import { Popover, PopoverContent } from './ui/popover';
-import { PopoverTrigger } from '@radix-ui/react-popover';
-import { Avatar } from '@radix-ui/react-avatar';
-import { AvatarFallback } from './ui/avatar';
-import { ModeToggle } from './mode-toggle';
+"use client";
+import React, { useState } from "react";
+import Link from "next/link";
+import { Button } from "./ui/button";
+import { Briefcase, Home, Info, LogOut, Menu, User, X } from "lucide-react";
+import { Popover, PopoverContent } from "./ui/popover";
+import { PopoverTrigger } from "@radix-ui/react-popover";
+import { AvatarFallback, Avatar, AvatarImage } from "./ui/avatar";
+import { ModeToggle } from "./mode-toggle";
+import { useAppData } from "@/context/AppContext";
 
 const NavBar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const toggleMenu = () => {
-    setIsOpen(!isOpen)
-  }
-  const isAuth = false;
+    setIsOpen(!isOpen);
+  };
+  const { isAuth, user, setIsAuth, setUser, loading,logoutUser } = useAppData();
 
-  const logoutHandler = () => { };
+  const logoutHandler = () => {
+    logoutUser();
+  };
 
   return (
     <nav className="z-50 sticky top-0 bg-background/80 border-b backdrop-blur-md shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <Link href={'/'} className="flex items-center gap-1 group">
+            <Link href={"/"} className="flex items-center gap-1 group">
               <div className="text-2xl font-bold tracking-tight">
-                <span className="bg-gradient-to-r from bg-blue-600 to-blue-800 bg-clip-text text-transparent">Hire</span>
-                <span className='text-red-500'>Hub</span>
+                <span className="bg-gradient-to-r from bg-blue-600 to-blue-800 bg-clip-text text-transparent">
+                  Hire
+                </span>
+                <span className="text-red-500">Hub</span>
               </div>
             </Link>
           </div>
-          <div className='hidden md:flex items-center space-x-1'>
+          <div className="hidden md:flex items-center space-x-1">
             <Link href={"/"}>
-              <Button variant={"ghost"} className='flex items-center gap2'>
+              <Button variant={"ghost"} className="flex items-center gap2">
                 <Home size={16} /> Home
               </Button>
             </Link>
             <Link href={"/jobs"}>
-              <Button variant={"ghost"} className='flex items-center gap2'>
+              <Button variant={"ghost"} className="flex items-center gap2">
                 <Briefcase size={16} /> Jobs
               </Button>
             </Link>
             <Link href={"/about"}>
-              <Button variant={"ghost"} className='flex items-center gap2'>
+              <Button variant={"ghost"} className="flex items-center gap2">
                 <Info size={16} /> About
               </Button>
             </Link>
           </div>
           {/* Right side actions */}
-          <div className='hidden md:flex items-center gap-3'>
-            {isAuth ? <Popover>
-              <PopoverTrigger asChild>
-                <button className='flex items-center gap-2 hover:opacity-80 transition-opacity'>
-                  <Avatar className="h-10 w-10 ring-2 ring-offset-2 ring-offset-background ring-blue-500/20 cursor-pointer hover:ring-blue-500/40 transition-all">
-                    {/* <AvatarImage src="/avatar.png" alt="User Avatar" /> */}
+          <div className="hidden md:flex items-center gap-3">
+            {loading ? (
+              ""
+            ) : (
+              <>
+                {isAuth ? (
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                        <Avatar className="h-10 w-10 ring-2 ring-offset-2 ring-offset-background ring-blue-500/20 cursor-pointer hover:ring-blue-500/40 transition-all">
+                          <AvatarImage
+                            src={user ? (user.profile_pic as string) : ""}
+                            alt={user ? user.name : ""}
+                          />
 
-                    <AvatarFallback className="bg-blue-100 dark:bg-blue-900 text-blue-600">
-                      A
-                    </AvatarFallback>
-                  </Avatar>
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className='w-56 p-2' align='end'>
-                <div className='px-3 py-3 mb-2 border-b'>
-                  <p className='text-sm font-semibold'>Afreen</p>
-                  <p className='text-xs opacity-60 truncate'>
-                    afreen4115@gmail.com
-                  </p>
-
-                </div>
-                <Link href={"/account"}>
-                  <Button className='w-full justify-start gap-2'
-                    variant={"ghost"}>
-                    <User size={16} /> My Profile
-                  </Button>
-                </Link>
-                <Button
-                  className='w-full justify-start gap-2 m-1'
-                  variant={"ghost"}
-                  onClick={logoutHandler}
-                >
-                  <LogOut size={16} />Logout
-                </Button>
-              </PopoverContent>
-            </Popover> : <Link href={`/login`}>
-              <Button className='gap-2'>
-                <User size={16} /> Sign In
-              </Button>
-            </Link>}
+                          <AvatarFallback className="bg-blue-100 dark:bg-blue-900 text-blue-600">
+                            {user?.name?.charAt(0).toUpperCase() || "A"}
+                          </AvatarFallback>
+                        </Avatar>
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-56 p-2" align="end">
+                      <div className="px-3 py-3 mb-2 border-b">
+                        <p className="text-sm font-semibold">{user && user.name}</p>
+                        <p className="text-xs opacity-60 truncate">
+                          {user && user.email}
+                        </p>
+                      </div>
+                      <Link href={"/account"}>
+                        <Button
+                          className="w-full justify-start gap-2"
+                          variant={"ghost"}
+                        >
+                          <User size={16} /> My Profile
+                        </Button>
+                      </Link>
+                      <Button
+                        className="w-full justify-start gap-2 m-1"
+                        variant={"ghost"}
+                        onClick={logoutHandler}
+                      >
+                        <LogOut size={16} />
+                        Logout
+                      </Button>
+                    </PopoverContent>
+                  </Popover>
+                ) : (
+                  <Link href={`/login`}>
+                    <Button className="gap-2">
+                      <User size={16} /> Sign In
+                    </Button>
+                  </Link>
+                )}
+              </>
+            )}
             <ModeToggle />
           </div>
           {/* mobile menu button */}
-          <div className='md:hidden flex items-center gap-3'>
+          <div className="md:hidden flex items-center gap-3">
             <ModeToggle />
-            <button onClick={toggleMenu}
-              className='p-2 rounded-lg hover:bg-accent transition-colors'
-              aria-label='Toggle menu'
+            <button
+              onClick={toggleMenu}
+              className="p-2 rounded-lg hover:bg-accent transition-colors"
+              aria-label="Toggle menu"
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -107,54 +127,55 @@ const NavBar = () => {
         className={`md:hidden border-t overflow-hidden transition-all duration-300
         ease-in-out ${isOpen ? "max-96 opacity-100" : "max-h-0 opacity-0"} `}
       >
-        <Link href={'/'} onClick={toggleMenu}>
-          <Button variant={"ghost"}
-            className='w-full justify-start gap-3 h-11'>
+        <Link href={"/"} onClick={toggleMenu}>
+          <Button variant={"ghost"} className="w-full justify-start gap-3 h-11">
             <Home size={18} /> Home
           </Button>
         </Link>
-        <Link href={'/jobs'} onClick={toggleMenu}>
-          <Button variant={"ghost"}
-            className='w-full justify-start gap-3 h-11'>
+        <Link href={"/jobs"} onClick={toggleMenu}>
+          <Button variant={"ghost"} className="w-full justify-start gap-3 h-11">
             <Home size={18} /> Jobs
           </Button>
         </Link>
-        <Link href={'/about'} onClick={toggleMenu}>
-          <Button variant={"ghost"}
-            className='w-full justify-start gap-3 h-11'>
+        <Link href={"/about"} onClick={toggleMenu}>
+          <Button variant={"ghost"} className="w-full justify-start gap-3 h-11">
             <Home size={18} /> About
           </Button>
         </Link>
-        {
-          isAuth ? (<>
+        {isAuth ? (
+          <>
             <Link href={"/about"} onClick={toggleMenu}>
               <Button
                 variant={"ghost"}
-                className='w-full justify-start gap-3 h-11 mt-2'>
+                className="w-full justify-start gap-3 h-11 mt-2"
+              >
                 <User size={18} /> My Profile
               </Button>
             </Link>
             <Button
               variant={"destructive"}
-              className='w-full justify-start gap-3 h-11'
+              className="w-full justify-start gap-3 h-11"
               onClick={() => {
                 logoutHandler();
                 toggleMenu();
               }}
             >
-              <LogOut size={18} />Logout
-            </Button></>) : (<>
-              <Link href={"/login"} onClick={toggleMenu}>
-                <Button className='w-full justify-start gap-3 h-11 mt-2'>
-                  <User size={18} /> SignIn
-                </Button>
-              </Link>
-            </>)
-        }
+              <LogOut size={18} />
+              Logout
+            </Button>
+          </>
+        ) : (
+          <>
+            <Link href={"/login"} onClick={toggleMenu}>
+              <Button className="w-full justify-start gap-3 h-11 mt-2">
+                <User size={18} /> SignIn
+              </Button>
+            </Link>
+          </>
+        )}
       </div>
     </nav>
-  )
+  );
+};
 
-}
-
-export default NavBar
+export default NavBar;
