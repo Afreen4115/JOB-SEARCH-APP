@@ -5,26 +5,38 @@ import user_fallback from "../../assets/user_profile_pick_fallback.png";
 import {
   Briefcase,
   Camera,
+  Edit,
   FileText,
   Mail,
   NotepadText,
   Phone,
+  UserIcon,
 } from "lucide-react";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import { useAppData } from "@/context/AppContext";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 const Info: React.FC<AccountProps> = ({ user, isYourAccount }) => {
-  const [btnLoading, setBtnLoding] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const editRef = useRef<HTMLInputElement | null>(null);
+  const editRef = useRef<HTMLButtonElement | null>(null);
   const resumeRef = useRef<HTMLInputElement | null>(null);
 
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [bio, setBio] = useState("");
-  const {updateProfilePic,updateResume} =useAppData();
+  const { updateProfilePic, updateResume, btnLoading, updateUser } =
+    useAppData();
 
   const handleClick = () => {
     inputRef.current?.click();
@@ -45,7 +57,9 @@ const Info: React.FC<AccountProps> = ({ user, isYourAccount }) => {
     setPhoneNumber(user.phone_number);
     setBio(user.bio || "");
   };
-  const updateProfileHandler = () => {};
+  const updateProfileHandler = () => {
+    updateUser(name, phoneNumber, bio);
+  };
 
   const changeResume = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -56,14 +70,13 @@ const Info: React.FC<AccountProps> = ({ user, isYourAccount }) => {
       }
       const formData = new FormData();
       formData.append("file", file);
-      updateResume(formData);//api call
-      
+      updateResume(formData); //api call
     }
   };
 
-  const handleResumeClick=()=>{
+  const handleResumeClick = () => {
     resumeRef.current?.click();
-  }
+  };
 
   return (
     <div className="mx-w-5xl mx-auto px-4 py-8">
@@ -71,7 +84,7 @@ const Info: React.FC<AccountProps> = ({ user, isYourAccount }) => {
         <div className="h-32 bg-blue-500 relative">
           <div className="absolute -bottom-16 left-8">
             <div className="relative-group">
-              <div className="w-36 h-40 rounded-full border-4 border-background overflow-hidden sladow-xl bg-background">
+              <div className="w-36 h-36 rounded-full border-4 border-background overflow-hidden sladow-xl bg-background">
                 <img
                   src={user.profile_pic || user_fallback.src}
                   alt="User profile"
@@ -108,6 +121,16 @@ const Info: React.FC<AccountProps> = ({ user, isYourAccount }) => {
               <div className="flex items-center gap-3">
                 <h1 className="text-3xl font-bold">{user.name}</h1>
                 {/* edit button */}
+                {isYourAccount && (
+                  <Button
+                    variant={"ghost"}
+                    size={"icon"}
+                    onClick={handleEditClick}
+                    className="h-8 w-8"
+                  >
+                    <Edit size={16} />
+                  </Button>
+                )}
               </div>
               <div className="flex items-center gap-2 text-sm opacity-70">
                 <Briefcase size={16} />
@@ -162,7 +185,9 @@ const Info: React.FC<AccountProps> = ({ user, isYourAccount }) => {
                   <NotepadText size={20} className="text-red-600" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium">Resume Document</p>
+                  <p className="text-sm font-medium">
+                    {user.name.replace(/\s+/g, "_")}_pdf
+                  </p>
                   <Link
                     href={user.resume}
                     className="text-sm text-blue-500 hover:underline"
@@ -171,16 +196,104 @@ const Info: React.FC<AccountProps> = ({ user, isYourAccount }) => {
                     View Resume PDF
                   </Link>
                 </div>
-                <Button variant={"outline"} size={"sm"} onClick={handleResumeClick}>
-                  Update
-                </Button>
-                <input type="file" ref={resumeRef} className="hidden"
-                accept="application/pdf" onChange={changeResume}/>
+                {isYourAccount && (
+                  <>
+                    <Button
+                      variant={"outline"}
+                      size={"sm"}
+                      onClick={handleResumeClick}
+                    >
+                      Update
+                    </Button>
+                    <input
+                      type="file"
+                      ref={resumeRef}
+                      className="hidden"
+                      accept="application/pdf"
+                      onChange={changeResume}
+                    />
+                  </>
+                )}
               </div>
             </div>
           )}
         </div>
       </Card>
+      {/* Dialog box */}
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button ref={editRef} variant={"outline"} className="hidden">
+            Edit Profile
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">Edit Profile</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-5 py-4">
+            <div className="space-y-2">
+              <Label
+                htmlFor="name"
+                className="text-sm font-medium flex items-center gap-2"
+              >
+                <UserIcon size={16} /> Full Name
+              </Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="Enter your name"
+                className="h-11"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label
+                htmlFor="phone"
+                className="text-sm font-medium flex items-center gap-2"
+              >
+                <Phone size={16} /> Phone Number
+              </Label>
+              <Input
+                id="phone"
+                type="number"
+                placeholder="Enter your Phone Number"
+                className="h-11"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+              />
+            </div>
+            {user.role === "jobseeker" && (
+              <div className="space-y-2">
+                <Label
+                  htmlFor="bio"
+                  className="text-sm font-medium flex items-center gap-2"
+                >
+                  <FileText size={16} /> Full Name
+                </Label>
+                <Input
+                  id="bio"
+                  type="text"
+                  placeholder="Enter your Bio"
+                  className="h-11"
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                />
+              </div>
+            )}
+            <DialogFooter>
+              <Button
+                disabled={btnLoading}
+                onClick={updateProfileHandler}
+                className="w-full h-11"
+                type="submit"
+              >
+                {btnLoading ? "Saving Changes..." : "Save Changes"}
+              </Button>
+            </DialogFooter>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

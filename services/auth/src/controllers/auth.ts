@@ -13,7 +13,7 @@ import { redisClient } from "../index.js";
 
 export const registerUser=TryCatch(async(req,res,next)=>{
     const {email,name,password,phoneNumber,bio,role}=req.body;
-    if(!email || !name || !password || !phoneNumber ||  !role || !bio){
+    if(!email || !name || !password || !phoneNumber ||  !role){
       throw new ErrorHandler(400,"Please fill all details")
     }
     const existingUsers=await sql`SELECT user_id FROM users WHERE email=${email}`

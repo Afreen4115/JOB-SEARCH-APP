@@ -83,12 +83,69 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
      }
    }
 
+   async function updateUser(name:string,phoneNumber:string,bio:string){
+        try {
+          setBtnLoading(true);
+          const {data}= await axios.put(`${user_service}/api/user/update/profile`,
+            {
+              name,phoneNumber,bio
+            },{
+              headers:{
+                Authorization:`Bearer ${token}`
+              }
+            }
+          );
+          toast.success(data.message);
+          fetchUser();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error:any) {
+          toast.error(error.response.data.message);
+        }finally{
+          setBtnLoading(false);
+        }
+   }
+
   async function logoutUser() {
     Cookies.set("token", "");
     setUser(null);
     setIsAuth(false);
     toast.success("Logged out successfully")
   }
+
+  async function addSkill(skill:string,setSkill:React.Dispatch<React.SetStateAction<string>>){
+      setBtnLoading(true);
+      try {
+        const {data}=await axios.post(`${user_service}/api/user/skill/add`,{skillName:skill},{
+          headers:{
+            Authorization:`Bearer ${token}`
+          }
+        });
+        toast.success(data.message);
+        setSkill("");
+        fetchUser();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (error:any) {
+        toast.error(error.response.data.message);
+      }finally{
+        setBtnLoading(false);
+      }
+  }
+
+  async function removeSkill(skill: string) {
+    try {
+      const { data } = await axios.put(`${user_service}/api/user/skill/delete`, { skillName: skill }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      toast.success(data.message);
+      fetchUser();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error.response.data.message);
+    }
+  }
+
 
   useEffect(() => {
     fetchUser();
@@ -106,7 +163,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         setLoading,
         logoutUser,
         updateProfilePic,
-        updateResume
+        updateResume,
+        updateUser,
+        addSkill,
+        removeSkill
       }}
     >
       {children}

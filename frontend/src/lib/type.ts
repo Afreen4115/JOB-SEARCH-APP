@@ -81,6 +81,9 @@ export interface AppContextType{
     updateProfilePic:(formData:any)=>Promise<void>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     updateResume:(formData:any)=>Promise<void>;
+    updateUser:(name:string,phoneNumber:string,bio:string)=>Promise<void>;
+    addSkill:(skill:string,setSkill:React.Dispatch<React.SetStateAction<string>>)=>Promise<void>;
+    removeSkill:(skill:string)=>Promise<void>;
 
 }
 
@@ -93,3 +96,36 @@ export interface AccountProps{
     user:User;
     isYourAccount:boolean
 }
+
+export interface Job{
+    job_id:number;
+    title:string;
+    description:string;
+    salary:number | null;
+    location:string|null;
+    job_type:"Full-time" | "Part-time" | "Contract" | "Internship";
+    openings:number;
+    role:string;
+    work_location:'On-site' | 'Remote' | 'Hybrid' ;
+    company_id:number;
+    posted_by_recuriter_id:number;
+    created_at:string;
+    is_active:boolean;
+
+}
+
+export interface Company{
+    company_id:string;
+    name:string;
+    description:string,
+    website:string,
+    logo:string,
+    logo_public_id:string;
+    recruiter_id:number;
+    created_at:string;
+    job?:Job[];
+}
+
+type ApplicationStatus='Submitted' | 'Rejected' | 'Hired';
+
+
