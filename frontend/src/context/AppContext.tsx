@@ -38,6 +38,51 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       setLoading(false);
     }
   }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async function updateProfilePic(formData:any) {
+    setLoading(true);
+    try {
+      const {data}=await axios.put(`${user_service}/api/user/update/pic`,formData,
+        {
+          headers:{
+            Authorization:`Bearer ${token}`
+          }
+        }
+      );
+      toast.success(data.message);
+      fetchUser();
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error:any) {
+      toast.error(error.response?.data?.message);
+    }finally{
+      setLoading(false);
+    }
+  }
+  
+   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   async function updateResume(formData:any){
+     setLoading(true);
+     try {
+       const { data } = await axios.put(`${user_service}/api/user/update/resume`, formData,
+         {
+           headers: {
+             Authorization: `Bearer ${token}`
+           }
+         }
+       );
+       toast.success(data.message);
+       fetchUser();
+
+       // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     } catch (error: any) {
+       toast.error(error.response?.data?.message);
+     } finally {
+       setLoading(false);
+     }
+   }
+
   async function logoutUser() {
     Cookies.set("token", "");
     setUser(null);
@@ -59,7 +104,9 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         isAuth,
         setIsAuth,
         setLoading,
-        logoutUser
+        logoutUser,
+        updateProfilePic,
+        updateResume
       }}
     >
       {children}
