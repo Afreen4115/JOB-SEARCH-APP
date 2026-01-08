@@ -195,7 +195,7 @@ export const resetPassword=TryCatch(async(req,res,next)=>{
 
     await sql`UPDATE users SET password=${hashPassword} WHERE user_id=${user.user_id}`;
 
-    await redisClient.del(`forgot:${email}`);
+    await redisClient.del(`forget:${email}`);
 
     res.json({message:"Password changed successfully"})
 })
