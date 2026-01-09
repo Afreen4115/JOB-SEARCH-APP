@@ -189,6 +189,7 @@ const CompanyPage = () => {
         job_type: jobType,
         work_location: workLocation,
         company_id: id,
+        is_active:isActive
       };
       await axios.put(
         `${job_service}/api/job/${selectedJob.job_id}`,

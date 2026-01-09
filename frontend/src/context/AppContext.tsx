@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { AppProviderProps, User } from "@/lib/type";
+import { Application, AppProviderProps, User } from "@/lib/type";
 import { AppContextType } from "@/lib/type";
 import { createContext, useState, useContext, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
@@ -19,6 +20,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [isAuth, setIsAuth] = useState(false);
   const [loading, setLoading] = useState(true);
   const [btnLoading, setBtnLoading] = useState(false);
+  const [applications,setApplications]=useState<Application [] | null>(null);
 
   const token = Cookies.get("token");
 
@@ -146,9 +148,48 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     }
   }
 
+  async function applyJob(jobId:number){
+    try {
+      setBtnLoading(true);
+      const {data}=await axios.post(`${user_service}/api/user/apply/job`,
+        {
+          job_id:jobId
+        },
+        {
+          headers:{
+            Authorization:`Bearer ${token}`
+          }
+        }
+
+      );
+      toast.success(data.message);
+      fetchApplications();
+    } catch (error:any) {
+      toast.error(error.response.data.message);
+    }finally{
+      setBtnLoading(false);
+    }
+  }
+  async function fetchApplications(){
+    try {
+      const { data } = await axios.get(`${user_service}/api/user/application/all`,
+        {
+          headers:{
+            Authorization:`Bearer ${token}`
+          }
+        }
+      );
+      setApplications(data);
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
 
   useEffect(() => {
     fetchUser();
+    fetchApplications();
   }, []);
 
   return (
@@ -166,7 +207,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         updateResume,
         updateUser,
         addSkill,
-        removeSkill
+        removeSkill,
+        applyJob,
+        applications,
+        fetchApplications
       }}
     >
       {children}
