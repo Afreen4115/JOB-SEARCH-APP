@@ -12,6 +12,7 @@ export const auth_service = "http://localhost:5000";
 export const utils_service = "http://localhost:5001";
 export const user_service = "http://localhost:5002";
 export const job_service = "http://localhost:5003";
+export const payment_service ="http://localhost:5004"
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
@@ -20,7 +21,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [isAuth, setIsAuth] = useState(false);
   const [loading, setLoading] = useState(true);
   const [btnLoading, setBtnLoading] = useState(false);
-  const [applications,setApplications]=useState<Application [] | null>(null);
+  const [applications,setApplications]=useState<Application[]>([]);
 
   const token = Cookies.get("token");
 
