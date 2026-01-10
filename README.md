@@ -34,7 +34,6 @@ A modern, full-stack job search and recruitment platform built with microservice
 - 🎨 **Modern UI** - Responsive design with dark mode support
 - 🐳 **Containerized** - Docker support for easy deployment
 
-## 📸 Screenshots
 
 ### User Profile & Account Management
 
