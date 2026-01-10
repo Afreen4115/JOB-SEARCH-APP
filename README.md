@@ -198,14 +198,6 @@ The application follows a **microservices architecture** pattern with the follow
 ```
 JOB-SEARC-APP/
 │
-├── screenshots/                 # Application screenshots for documentation
-│   ├── user-profile.png        # User profile page screenshot
-│   ├── job-listings.png        # Job listings page screenshot
-│   ├── resume-analysis.png     # Resume analysis modal screenshot
-│   ├── career-guidance.png     # Career guidance modal screenshot
-│   ├── career-guidance-input.png # Career guidance skills input screenshot
-│   ├── job-detail.png          # Job detail page screenshot
-│   └── company-profile.png     # Company profile page screenshot
 │
 ├── frontend/                    # Next.js frontend application
 │   ├── src/
