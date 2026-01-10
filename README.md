@@ -10,7 +10,6 @@ A modern, full-stack job search and recruitment platform built with microservice
 ## 📋 Table of Contents
 
 - [Overview](#overview)
-- [Screenshots](#screenshots)
 - [Features](#features)
 - [Architecture](#architecture)
 - [Tech Stack](#tech-stack)
@@ -38,33 +37,27 @@ A modern, full-stack job search and recruitment platform built with microservice
 ## 📸 Screenshots
 
 ### User Profile & Account Management
-![User Profile Page](./screenshots/user-profile.png)
+
 *User profile page showcasing profile information, contact details, resume management, and subscription status tracking.*
 
 ### Job Discovery & Listings
-![Job Listings Page](./screenshots/job-listings.png)
 *Explore opportunities page displaying available job listings with filters and application status indicators.*
 
 ### AI-Powered Resume Analysis
-![Resume Analysis](./screenshots/resume-analysis.png)
 *ATS compatibility analyzer providing detailed feedback on resume formatting, keywords, structure, and readability with a comprehensive score breakdown.*
 
 ### Career Guidance
-![Career Guidance](./screenshots/career-guidance.png)
 *Personalized career path recommendations based on user skills, including job options, skills to learn, and learning approaches powered by Google Gemini AI.*
 
-![Career Guidance Skills Input](./screenshots/career-guidance-input.png)
 *Interactive skills input interface for generating personalized career recommendations.*
 
 ### Job Details
-![Job Detail Page](./screenshots/job-detail.png)
 *Detailed job posting view with company information, job description, location, salary, and application status.*
 
 ### Company Profiles
-![Company Profile](./screenshots/company-profile.png)
 *Company profile page displaying company information, mission, and active job openings.*
 
-> **Note:** Screenshot images should be placed in the `/screenshots` directory at the root of the project. Ensure images are named exactly as referenced above for proper display.
+
 
 ## ✨ Features
 
