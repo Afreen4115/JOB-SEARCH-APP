@@ -75,27 +75,28 @@ const AppliedJobs: React.FC<AppliedJobsProps> = ({ applications }) => {
                         <h3 className="text-xl font-medium mb-3">
                           {a.job_title}
                         </h3>
-                        <div className="flex flex-wrap gap-4 items-center">
+                        <div className="flex flex-wrap gap-4 items-center mb-2">
                           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600">
                             <DollarSign size={14} />
                             <span className="font-medium">
                               ₹ {a.job_salary}
                             </span>
                           </div>
-                        </div>
-                        <div
-                          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border ${statusConfig.bg} ${statusConfig.border}`}
-                        >
-                          <StatusIcon
-                            size={14}
-                            className={statusConfig.color}
-                          />
-                          <span
-                            className={`font-medium text-sm ${statusConfig.color}`}
+                          <div
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border ${statusConfig.bg} ${statusConfig.border}`}
                           >
-                            {a.status}
-                          </span>
+                            <StatusIcon
+                              size={14}
+                              className={statusConfig.color}
+                            />
+                            <span
+                              className={`font-medium text-sm ${statusConfig.color}`}
+                            >
+                              {a.status}
+                            </span>
+                          </div>
                         </div>
+                        
                       </div>
                       <Link
                         href={`/jobs/${a.job_id}`}
