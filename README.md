@@ -15,6 +15,7 @@ A modern, full-stack job search and recruitment platform built with microservice
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
 - [Services Documentation](#services-documentation)
+- [Database Indexing](#database-indexing)
 - [Getting Started](#getting-started)
 - [Environment Variables](#environment-variables)
 - [API Documentation](#api-documentation)
@@ -33,6 +34,7 @@ A modern, full-stack job search and recruitment platform built with microservice
 - 📊 **Real-time Updates** - Kafka-based event-driven architecture
 - 🎨 **Modern UI** - Responsive design with dark mode support
 - 🐳 **Containerized** - Docker support for easy deployment
+- ⚡ **Performance Optimized** - Database indexing for fast queries and search operations
 
 
 ### User Profile & Account Management
@@ -175,12 +177,13 @@ The application follows a **microservices architecture** pattern with the follow
 ### Backend Services
 - **Runtime**: Node.js with Express 5.2.1
 - **Language**: TypeScript 5.9.3
-- **Database**: PostgreSQL (Neon Serverless)
+- **Database**: PostgreSQL (Neon Serverless) with optimized indexes
 - **Caching**: Redis 5.10.0
 - **Authentication**: JWT (jsonwebtoken)
 - **Password Hashing**: bcrypt
 - **File Upload**: Multer
 - **Message Broker**: KafkaJS
+- **Database Indexing**: B-tree, GIN (pg_trgm), partial, and composite indexes
 
 ### Third-Party Services
 - **Cloud Storage**: Cloudinary (for resume and profile pictures)
@@ -291,6 +294,7 @@ JOB-SEARC-APP/
 - User authentication (Login)
 - Password reset functionality
 - Database initialization (creates users, skills, user_skills tables)
+- Database indexing (performance optimization)
 - Redis connection management
 - JWT token generation
 
@@ -322,6 +326,7 @@ JOB-SEARC-APP/
 - Job posting and management
 - Application viewing and status updates
 - Job listing and details
+- Database indexing (performance optimization for search queries)
 
 **Endpoints**:
 - `POST /api/job/company/new` - Create new company
@@ -412,6 +417,94 @@ JOB-SEARC-APP/
 - Email notifications
 - AI service requests
 - File upload processing
+
+---
+
+## 📊 Database Indexing
+
+The application uses **strategic database indexing** to optimize query performance, especially for job searches and filtering operations.
+
+### Overview
+
+Database indexes are automatically created when services start, improving query performance by 10x - 1000x depending on data size.
+
+### Index Types
+
+1. **B-tree Indexes** - Standard indexes for filtering, sorting, and joins
+   - Used for: PRIMARY KEY, UNIQUE constraints, foreign keys
+   - Examples: `user_id`, `job_id`, `company_id`, `email`
+
+2. **GIN Indexes** - Generalized Inverted Index for text search
+   - Used for: `ILIKE` queries on job titles and locations
+   - Requires: `pg_trgm` extension (enabled automatically)
+   - Examples: `jobs.title`, `jobs.location`
+
+3. **Partial Indexes** - Index only a subset of rows
+   - Used for: Active jobs (`is_active = true`), subscribed applications
+   - Benefits: Smaller size, faster queries
+
+4. **Composite Indexes** - Index on multiple columns
+   - Used for: Multi-column queries (e.g., `is_active + created_at`)
+   - Examples: `(job_id, subscribed, applied_at)`
+
+### Key Indexes
+
+#### Jobs Table
+- `idx_jobs_is_active` - Filter active jobs
+- `idx_jobs_company_id` - Join with companies
+- `idx_jobs_posted_by_recruiter` - Filter by recruiter
+- `idx_jobs_title_trgm` - Text search on job titles (GIN)
+- `idx_jobs_location_trgm` - Text search on locations (GIN)
+- `idx_jobs_created_at` - Sort by creation date
+
+#### Applications Table
+- `idx_applications_job_id` - Filter applications by job
+- `idx_applications_applicant_id` - Filter by applicant
+- `idx_applications_subscribed` - Filter premium subscribers
+
+#### Companies Table
+- `idx_companies_recruiter_id` - Filter companies by recruiter
+
+#### Users & Skills
+- `idx_user_skills_user_id` - Filter skills by user
+- `idx_user_skills_skill_id` - Filter users by skill
+- `idx_users_role` - Filter by user role
+
+### Automatic Index Creation
+
+Indexes are created automatically during service initialization:
+
+```typescript
+// In services/job/src/index.ts and services/auth/src/index.ts
+async function initDb() {
+    // Create tables...
+    await initIndexes(); // Automatically adds all performance indexes
+}
+```
+
+### Performance Impact
+
+**Example Query:**
+```sql
+SELECT * FROM jobs 
+WHERE is_active = true 
+AND title ILIKE '%developer%'
+ORDER BY created_at DESC;
+```
+
+- **Before Indexing**: Full table scan (O(n))
+- **After Indexing**: Index-based search (O(log n))
+- **Expected Improvement**: 10x - 1000x faster
+
+### Requirements
+
+- **PostgreSQL Extension**: `pg_trgm` is required for text search indexes
+  - Automatically enabled during initialization
+  - If your database provider restricts extensions, contact support or use standard B-tree indexes
+
+### Documentation
+
+For detailed indexing information, see [INDEXING.md](./INDEXING.md).
 
 ---
 
