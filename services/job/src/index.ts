@@ -2,6 +2,7 @@ import app from "./app.js"
 import dotenv from 'dotenv'
 import { sql } from "./utils/db.js";
 import { connectKafka } from "./utils/producer.js";
+import { initIndexes } from "./utils/addIndexes.js";
 
 dotenv.config();
 
@@ -80,6 +81,10 @@ async function initDb(){
         );
         `
         console.log("Job service database tables created successfully.")
+        
+        // Add performance indexes
+        await initIndexes();
+        
     } catch (error) {
         console.log("Error while creating tables",error);
         process.exit(1);

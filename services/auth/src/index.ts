@@ -3,6 +3,7 @@ import app from './app.js';
 import dotenv from 'dotenv';
 import { sql } from './utils/db.js';
 import { createClient } from 'redis';
+import { initIndexes } from './utils/addIndexes.js';
 
 dotenv.config();
 
@@ -65,6 +66,10 @@ async function initDb() {
     `;
 
     console.log("✅ Database created/checked successfully!");
+    
+    // Add performance indexes
+    await initIndexes();
+    
   } catch (error) {
     console.error("❌ Error initializing database", error);
     process.exit(1);
